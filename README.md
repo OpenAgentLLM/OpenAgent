@@ -7,13 +7,13 @@
     <img src="https://img.shields.io/github/stars/mrbende/OpenAgent?style=social" alt="GitHub stars">
   </a>
 </p>
-<a href="OpenAgent Logo">
-  <img align="center" src="https://i.imgur.com/1bPTaJw.png" alt="OpenAgent" width="200" height="200">
+<a href="OpenAgent Logo" align="center">
+  <img src="https://i.imgur.com/1bPTaJw.png" alt="OpenAgent" width="200" height="200">
 </a>
 <p align="center">Join the community on Discord!</p>
 <p align="center">
   <a href="https://discord.gg/ypNKmKa4XW" target="_blank">
-    <img src="https://img.shields.io/discord/:ypNKmKa4XW" alt="Discord">
+    <img src="https://dcbadge.vercel.app/api/server/ypNKmKa4XW" alt="Discord">
   </a>
 </p>
 
