@@ -6,6 +6,13 @@
   <a href="https://github.com/mrbende/OpenAgent/stargazers" target="_blank">
     <img src="https://img.shields.io/github/stars/mrbende/OpenAgent?style=social" alt="GitHub stars">
   </a>
+  <br>
+  <a href="https://github.com/mrbende/OpenAgent/commits" target="_blank">
+    <img src="https://img.shields.io/github/commit-activity/y/mrbende/OpenAgent" alt="GitHub commits">
+  </a>
+  <a href="https://github.com/mrbende/OpenAgent/commits" target="_blank">
+    <img src="https://img.shields.io/github/last-commit/mrbende/OpenAgent" alt="GitHub last commit">
+  </a>
 </p>
 <p align="center">
   <a href="OpenAgent Logo">
@@ -32,3 +39,4 @@ The extent to which these tools can be widely customized and cheaply deployed wi
 * [🤗 Hugging Face MPT-7B](https://huggingface.co/mosaicml/mpt-7b)
 * [Fine-Tuning MPT-7B](https://www.youtube.com/watch?v=KSlWkrByc0o&t=17s)
 * [LoRa for Fine-Tuning](https://bdtechtalks.com/2023/05/22/what-is-lora/)
+* [Sophia, a Second-order Optimizer](https://arxiv.org/abs/2305.14342)
