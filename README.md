@@ -1,6 +1,6 @@
 <h1 align="center">OpenAgent</h1>
 <a href="#">
-  <img src="https://i.imgur.com/1bPTaJw.png" alt="OpenAgent">
+  <img src="https://i.imgur.com/1bPTaJw.png" alt="OpenAgent" width="200" height="200">
 </a>
 
 <p align="center">
@@ -10,16 +10,13 @@
   <a href="https://github.com/mrbende/OpenAgent/stargazers" target="_blank">
     <img src="https://img.shields.io/github/stars/mrbende/OpenAgent?style=social" alt="GitHub stars">
   </a>
-  <a href="https://github.com/mrbende/OpenAgent" target="_blank">
-    <img src="https://img.shields.io/github/commit-activity/yourInterval/yourUser/yourRepo" alt="GitHub commit activity">
-  </a>
 </p>
 
 <p align="center">Join the community on Discord!</p>
 
 <p align="center">
   <a href="https://discord.gg/ypNKmKa4XW" target="_blank">
-    <img src="https://img.shields.io/discord/yourDiscordServerId?logo=discord" alt="Discord">
+    <img src="https://img.shields.io/discord/:ypNKmKa4XW" alt="Discord">
   </a>
 </p>
 
