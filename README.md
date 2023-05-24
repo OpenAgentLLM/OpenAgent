@@ -1,8 +1,4 @@
 <h1 align="center">OpenAgent</h1>
-<a href="#">
-  <img src="https://i.imgur.com/1bPTaJw.png" alt="OpenAgent" width="200" height="200">
-</a>
-
 <p align="center">
   <a href="https://github.com/mrbende?tab=followers" target="_blank">
     <img src="https://img.shields.io/github/followers/mrbende?style=social" alt="Follow on GitHub">
@@ -11,9 +7,10 @@
     <img src="https://img.shields.io/github/stars/mrbende/OpenAgent?style=social" alt="GitHub stars">
   </a>
 </p>
-
+<a href="OpenAgent Logo">
+  <img align="center" src="https://i.imgur.com/1bPTaJw.png" alt="OpenAgent" width="200" height="200">
+</a>
 <p align="center">Join the community on Discord!</p>
-
 <p align="center">
   <a href="https://discord.gg/ypNKmKa4XW" target="_blank">
     <img src="https://img.shields.io/discord/:ypNKmKa4XW" alt="Discord">
@@ -23,3 +20,12 @@
 ---
 
 An open-source implementation of MosaicAI's [MPT-7B](https://www.mosaicml.com/blog/mpt-7b) model, fine-tuned to function as an agent executer in [Langchain](https://github.com/hwchase17/langchain).
+
+## Aim
+The goal of this project is to create a hosted deployment of the MPT-7B model, fine-tuned to function as a Langchain agent executer. This will allow for the creation of a decentralized, open-source, and community-driven agent marketplace without the dependency of OpenAI's GPT-4 model.
+
+The extent to which these tools can be widely customized and cheaply deployed will allow for the creation of a new generation of agents that can be used to solve a wide variety of problems. OpenAgent is here to empower this!
+
+## Resources
+* [Fine-Tuning MPT-7B](https://www.youtube.com/watch?v=KSlWkrByc0o&t=17s)
+* [LoRa for Fine-Tuning](https://bdtechtalks.com/2023/05/22/what-is-lora/)
