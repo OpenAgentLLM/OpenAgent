@@ -13,6 +13,9 @@
   <a href="https://github.com/mrbende/OpenAgent/commits" target="_blank">
     <img src="https://img.shields.io/github/last-commit/mrbende/OpenAgent" alt="GitHub last commit">
   </a>
+  <a href="https://github.com/mrbende/OpenAgent" target="_blank">
+    <img src="https://img.shields.io/github/views/mrbende/OpenAgent?color=brightgreen" alt="GitHub views">
+  </a>
 </p>
 <p align="center">
   <a href="OpenAgent Logo">
