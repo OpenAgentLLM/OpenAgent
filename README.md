@@ -14,7 +14,10 @@
     <img src="https://img.shields.io/github/last-commit/mrbende/OpenAgent" alt="GitHub last commit">
   </a>
   <a href="https://github.com/mrbende/OpenAgent" target="_blank">
-    <img src="https://img.shields.io/github/views/mrbende/OpenAgent?color=brightgreen" alt="GitHub views">
+    <img src="https://img.shields.io/github/views/mrbende/OpenAgent" alt="GitHub views">
+  </a>
+  <a href="https://github.com/mrbende/OpenAgent" target="_blank">
+    <img src="https://img.shields.io/github/all-contributors/mrbende/OpenAgent/main" alt="Contributors">
   </a>
 </p>
 <p align="center">
