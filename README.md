@@ -40,3 +40,4 @@ The extent to which these tools can be widely customized and cheaply deployed wi
 * [Fine-Tuning MPT-7B](https://www.youtube.com/watch?v=KSlWkrByc0o&t=17s)
 * [LoRa for Fine-Tuning](https://bdtechtalks.com/2023/05/22/what-is-lora/)
 * [Sophia, a Second-order Optimizer](https://arxiv.org/abs/2305.14342)
+* [🦜🔗 LangChain-Datasets](https://huggingface.co/LangChainDatasets)
