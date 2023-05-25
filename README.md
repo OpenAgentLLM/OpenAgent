@@ -35,6 +35,8 @@ The goal of this project is to create a hosted deployment of the MPT-7B model, f
 
 The extent to which these tools can be widely customized and cheaply deployed will allow for the creation of a new generation of agents that can be used to solve a wide variety of problems. OpenAgent is here to empower this!
 
+Our implementation of MPT-7B will be hosted behind an API, integrated into Langchain, and tuned to structure outputs for the _[Structured Chat Agent](https://python.langchain.com/en/latest/modules/agents/agents/examples/structured_chat.html)_.
+
 ## Resources
 * [🤗 Hugging Face MPT-7B](https://huggingface.co/mosaicml/mpt-7b)
 * [Fine-Tuning MPT-7B](https://www.youtube.com/watch?v=KSlWkrByc0o&t=17s)
