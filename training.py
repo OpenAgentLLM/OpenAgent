@@ -1,4 +1,5 @@
 import sagemaker
+from sagemaker.huggingface import HuggingFace
 import boto3
 
 try:
