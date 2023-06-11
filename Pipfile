@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+datasets = "*"
+pandas = "*"
+apache-beam = "*"
+transformers = "*"
+multiprocess = "==0.70.9"
+
+[dev-packages]
+ipykernel = "*"
+
+[requires]
+python_version = "3.9"
