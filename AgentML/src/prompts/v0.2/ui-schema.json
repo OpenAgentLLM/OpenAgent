@@ -1,0 +1,17 @@
+{
+  "header": {
+    "goal": {
+      "ui:widget": "textarea"
+    },
+    "tools": {
+      "items": {
+        "description": {
+          "ui:widget": "textarea"
+        }
+      }
+    },
+    "context": {
+      "ui:widget": "textarea"
+    }
+  }
+}

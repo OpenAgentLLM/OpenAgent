@@ -8,6 +8,52 @@ import { useEffect } from 'react';
 // Import Tokenizer as SSR disabled React component for Next.js
 import dynamic from 'next/dynamic';
 const Tokenizer = dynamic(() => import('../components/Tokenizer').then(mod => mod.Tokenizer), { ssr: false });
+import validator from '@rjsf/validator-ajv8';
+import Form from '@rjsf/core';
+import { RJSFSchema } from '@rjsf/utils';
+const nearley = require("nearley");
+
+import { Tiptap } from '../components/Tiptap';
+
+// import schema from '../components/json-schema.json';
+// import uiSchema from '../components/ui-schema.json';
+// import schema from '../prompts/v0.2/json-schema.json';
+// import uiSchema from '../prompts/v0.2/ui-schema.json';
+import schema from '../prompts/airoboros/json-schema.json';
+import uiSchema from '../prompts/airoboros/ui-schema.json';
+
+// const grammar = require("./grammar.js");
+const grammar = require("../prompts/airoboros/grammar");
+
+// Create a Parser object from our grammar.
+const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+
+// Parse something!
+parser.feed(`USER:hey
+ASSISTANT:ello
+USER:hey
+ASSISTANT:ello
+
+USER:hey
+ASSISTANT:ello
+USER:hey
+ASSISTANT:ello`);
+
+// parser.results is an array of possible parsings.
+console.log((parser.results)); // [[[[["foo"],"\n"]]]]
+
+
+// const schema: RJSFSchema = {
+//   title: 'Todo',
+//   type: 'object',
+//   required: ['title'],
+//   properties: {
+//     title: { type: 'string', title: 'Title', default: 'A new task' },
+//     done: { type: 'boolean', title: 'Done?', default: false },
+//   },
+// };
+
+const log = (type) => console.log.bind(console, type);
 
 export default function Home() {
 
@@ -24,7 +70,40 @@ export default function Home() {
   return (
     // <main className="flex min-h-screen flex-col items-center justify-between p-24">
     <main>
-      <Tokenizer />
+
+      {/* <div className="mx-auto w-full max-w-7xl grow lg:flex xl:px-2"> */}
+      <div className="mx-auto w-full grow lg:flex xl:px-2">
+        {/* Left sidebar & main wrapper */}
+        <div className="flex-1 xl:flex">
+        {/* <div className="columns-2"> */}
+          <div className="w-full">
+          {/* <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">*/}
+            <Form
+              className="schema-form"
+              schema={schema}
+              uiSchema={uiSchema}
+              validator={validator}
+              onChange={log('changed')}
+              onSubmit={log('submitted')}
+              onError={log('errors')}
+            />
+          </div>
+
+          {/* <div className="border-b border-gray-200 px-4 py-6 sm:px-6 lg:pl-8 xl:w-64 xl:shrink-0 xl:border-b-0 xl:border-r xl:pl-6"> */}
+          {/* <div className="border-b border-gray-200 px-4 py-6 sm:px-6 lg:pl-8 xl:border-b-0 xl:border-r xl:pl-6"> */}
+          <div className="w-full">
+            {/* Left column area */}
+            <Tiptap />
+            <Tokenizer />
+          </div>
+
+        </div>
+
+        {/* <div className="shrink-0 border-t border-gray-200 px-4 py-6 sm:px-6 lg:w-96 lg:border-l lg:border-t-0 lg:pr-8 xl:pr-6">
+          <Tokenizer />
+        </div> */}
+      </div>
+
       {/*
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">

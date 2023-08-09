@@ -69,25 +69,47 @@ export function Tokenizer() {
     onUpdateTokensDebounced(nextText);
   };
 
-  return <div className="grid grid-cols-2 gap-4">
+  const [view, setView] = useState<'editor' | 'tokenizer'>('tokenizer');
+  const toggleView = () => {
+    setView((prev) => prev === 'editor' ? 'tokenizer' : 'editor');
+  };
+
+  console.log('tokens', tokens);
+
+  return <div>
     <div>
-      <textarea value={text} onChange={onChange} className="text-black h-full w-full" />
+      <button onClick={toggleView}>
+        {view === 'editor' ? 'Tokenizer' : 'Edit'}
+      </button>
     </div>
-    <div>
-      <div>
-        <select value={model} onChange={(e) => setModel(e.target.value)}>
-          {supportedModels.map((model) => <option key={model} value={model}>{model}</option>)}
-        </select>
-      </div>
-      <div># tokens: {tokens.length}</div>
-      <div>
-        {tokens.map((token, i) => <TokenVisualizer key={i} model={model} token={token} />)}
-      </div>
-      {showTokenIds && (
+    <div className="grid grid-cols-2 gap-4">
+      {view === 'editor' && (
         <div>
-          [
-          {tokens.map((token, i) => <React.Fragment key={i}><TokenVisualizer key={i} model={model} token={{ ...token, content: token.id.toString() }} />, </React.Fragment>)}
-          ]
+          <textarea value={text} onChange={onChange} className="text-black h-full w-full" />
+        </div>
+      )}
+      {view === 'tokenizer' && (
+        <div>
+          <div>
+            <div>
+              <select value={model} onChange={(e) => setModel(e.target.value)}>
+                {supportedModels.map((model) => <option key={model} value={model}>{model}</option>)}
+              </select>
+            </div>
+            <div># tokens: {tokens.length}</div>
+          </div>
+          <div>
+            <div>
+              {tokens.map((token, i) => <TokenVisualizer key={i} model={model} token={token} />)}
+            </div>
+            {showTokenIds && (
+              <div>
+                [
+                {tokens.map((token, i) => <React.Fragment key={i}><TokenVisualizer key={i} model={model} token={{ ...token, content: token.id.toString() }} />, </React.Fragment>)}
+                ]
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

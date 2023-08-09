@@ -1,0 +1,99 @@
+{
+    "title": "AgentML",
+    "description": "Agent Markup Language",
+    "type": "object",
+    "required": [],
+    "properties": {
+      "header": {
+        "type": "object",
+        "title": "Header",
+        "properties": {
+          "goal": {
+            "type": "string",
+            "title": "Goal"
+          },
+          "tools": {
+            "type": "array",
+            "title": "Tools",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "title": "Tool ID"
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Tool Name"
+                },
+                "description": {
+                  "type": "string",
+                  "title": "Description"
+                }
+              }
+            }
+          },
+          "context": {
+            "type": "string",
+            "title": "Context"
+          }
+        }
+      },
+      "rounds": {
+        "type": "array",
+        "title": "Rounds",
+        "items": {
+          "type": "object",
+          "properties": {
+            "execution": {
+              "title": "Execution",
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "title": "Thoughts",
+                    "type": "string"
+                  },
+                  {
+                    "title": "Action",
+                    "type": "object",
+                    "properties": {
+                      "actionId": {
+                        "type": "number",
+                        "title": "Action ID"
+                      },
+                      "toolId": {
+                        "type": "number",
+                        "title": "Tool ID"
+                      },
+                      "toolInput": {
+                        "type": "string",
+                        "title": "Tool Input for Action"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "observations": {
+              "type": "array",
+              "title": "Observations",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "actionId": {
+                    "title": "Action ID",
+                    "type": "number"
+                  },
+                  "results": {
+                    "title": "Observed Results",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
