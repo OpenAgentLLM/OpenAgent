@@ -93,7 +93,7 @@ export default function Home() {
           {/* <div className="border-b border-gray-200 px-4 py-6 sm:px-6 lg:pl-8 xl:border-b-0 xl:border-r xl:pl-6"> */}
           <div className="w-full">
             {/* Left column area */}
-            <Tiptap />
+            {/* <Tiptap /> */}
             <Tokenizer />
           </div>
 

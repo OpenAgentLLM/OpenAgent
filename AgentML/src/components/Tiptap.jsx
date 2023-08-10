@@ -2,79 +2,49 @@
 
 import { useEditor, Editor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-// import { Plugin, DecorationSet } from '@tiptap/core';
-
-// import { Editor, Extension } from '@tiptap/core'
-import { Node as ProsemirrorNode } from '@tiptap/pm/model'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
-import { Decoration, DecorationSet } from '@tiptap/pm/view'
 
 import { ColorHighlighter } from './ColorHighlighter'
 
-/*
 export const Tiptap = () => {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-    ],
-    content: '<p>Hello World! 🌎️</p>',
-  })
-
-  return (
-    <EditorContent editor={editor} />
-  )
-}
-*/
-
-const MyColorPlugin = (colorFunction) => {
-  return new Plugin({
-    name: 'colorPlugin',
-    state: {
-      init(_, { doc }) {
-        return this.applyDecorations(doc);
-      },
-      applyDecorations(doc) {
-        const decorations = [];
-        const textRanges = colorFunction(doc.text);
-
-        textRanges.forEach(({ range, color }) => {
-          decorations.push(DecorationSet.create(doc, [
-            Decoration.inline(range.start, range.end, {
-              style: `color: ${color};`,
-            }),
-          ]));
-        });
-
-        return DecorationSet.create(doc, decorations);
-      },
-      apply(tr, decorationSet) {
-        return decorationSet.map(tr.mapping, tr.doc);
-      },
-    },
-    props: {
-      decorations(state) {
-        return this.getState(state);
-      },
-    },
-  });
-};
-
-export const Tiptap = () => {
-  const yourColorFunction = (text) => {
-    // Return text ranges with respective colors based on your logic.
-    // Example: [{ range: { start: 0, end: 5 }, color: 'red' }, ...]
-    console.log('yourColorfunc', text);
-    return [];
-  };
-
   const editor = useEditor({
     extensions: [
       StarterKit,
       ColorHighlighter,
-    //   MyColorPlugin(yourColorFunction),
     ],
-    content: '<p>Your content here: #FFF, #0D0D0D, #616161, #A975FF, #FB5151, #FD9170, #FFCB6B, #68CEF8, #80cbc4, #9DEF8F</p>',
+    // content: '<p>Your content here: #FFF, #0D0D0D, #616161, #A975FF, #FB5151, #FD9170, #FFCB6B, #68CEF8, #80cbc4, #9DEF8F</p>',
+    content: newlinewsToParagraphs(`<|header|>
+<|goal|>Create a list of current open-source LLMs
+<|tools|>
+<|tool|>1
+search
+Use this tool to search the internet for websites, the result is a JSON list of search results with URLs
+<|tool|>2
+browse
+Use this tool to get the content of a website with a given URL
+<|context|>
+The current date is 2023-06-02
+<|execution|>
+I need to find information about current open-source large language models as of June 2023
+<|actions_start|>
+<|action|>1
+<|use_tool|>1
+open-source llms june 2023
+<|action|>2
+<|use_tool|>1
+open-source large language models
+<|actions_end|>
+<|observations_start|>
+<|observation|>1
+{search_result_1}
+<|observation|>2
+{search_result_2}
+<|observations_end|>
+`)
   });
 
   return <EditorContent editor={editor} />;
 };
+
+function newlinewsToParagraphs(text) {
+  return text.split('\n').map(line => `<p>${line}</p>`).join('');
+}

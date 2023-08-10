@@ -1,9 +1,20 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { PreTrainedTokenizer, AutoTokenizer } from '@xenova/transformers';
 import { debounce } from 'lodash';
 import { getModelJSON } from '@xenova/transformers/src/utils/hub';
+import { useEditor, Editor, EditorContent, EditorEvents } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
+
+import { Extension } from '@tiptap/core'
+import { Plugin } from '@tiptap/pm/state'
+
+import { findTokens } from './findTokens';
 
 type Token = { content: string, id: number };
 
@@ -42,7 +53,7 @@ export function Tokenizer() {
   // Debounce updating tokens based on text with callback cache
   const onUpdateTokens = useCallback(async (text: string) => {
     if (!tokenizer || !text) return;
-    const tokenIds = await tokenizer.encode(text);
+    const tokenIds = tokenizer.encode(text);
     const tokens = tokenizer.batch_decode(tokenIds.map((id) => [id]), {
       clean_up_tokenization_spaces: false, // Didn't work
     });
@@ -59,59 +70,142 @@ export function Tokenizer() {
 
   const onUpdateTokensDebounced = useCallback(debounce(onUpdateTokens, 200, { 'maxWait': 500 }), [onUpdateTokens]);
 
-  useEffect(() => {
-    onUpdateTokensDebounced(text);
-  }, [onUpdateTokensDebounced, text]);
+  // useEffect(() => {
+  //   onUpdateTokensDebounced(text);
+  // }, [onUpdateTokensDebounced, text]);
 
-  const onChange = (e: any) => {
-    const nextText = e.target.value;
+  // const onChange = (e: any) => {
+  //   const nextText = e.target.value;
+  //   setText(nextText);
+  //   onUpdateTokensDebounced(nextText);
+  // };
+
+  const onEditorUpdate = ({ editor: currentEditor }: EditorEvents['update']) => {
+    const nextText = currentEditor.getText({
+      // blockSeparator: '\n',
+      blockSeparator: '',
+      textSerializers: {
+        'paragraph': ({ node, parent }) => {
+          // console.log('paragraph node', { node, parent });
+          if (node.content.size === 0) {
+            return '\n';
+          }
+          return '';
+        },
+        'text': ({ node, pos, parent, index }) => {
+          // console.log('text node', { node, parent });
+          const text = node.text || '';
+          if (parent?.type.name === 'paragraph') {
+            return `${text}\n`;
+          }
+          return text;
+          // return node?.text?.slice(Math.max(from, pos) - pos, to - pos) // eslint-disable-line
+        }
+      }
+    });
+    const nextHTML = currentEditor.getHTML();
+    // console.log('onEditorUpdate', { nextText, nextHTML });
+    console.log('onEditorUpdate nextText');
+    console.log(nextText);
+    console.log('onEditorUpdate nextHTML');
+    console.log(nextHTML);
     setText(nextText);
     onUpdateTokensDebounced(nextText);
   };
 
-  const [view, setView] = useState<'editor' | 'tokenizer'>('tokenizer');
-  const toggleView = () => {
-    setView((prev) => prev === 'editor' ? 'tokenizer' : 'editor');
-  };
+  // console.log('tokens', tokens);
 
-  console.log('tokens', tokens);
+  const contentHtml = newlinewsToParagraphs(text);
+  console.log('contentHtml');
+  console.log(contentHtml);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Document,
+      Paragraph,
+      Text,
+      useTokenHighlighter({ tokenizer }),
+    ],
+    onUpdate: onEditorUpdate,
+    content: contentHtml,
+    // content: '<p>Your content here: #FFF, #0D0D0D, #616161, #A975FF, #FB5151, #FD9170, #FFCB6B, #68CEF8, #80cbc4, #9DEF8F</p>',
+    //     content: newlinewsToParagraphs(`<|header|>
+    // <|goal|>Create a list of current open-source LLMs
+    // <|tools|>
+    // <|tool|>1
+    // search
+    // Use this tool to search the internet for websites, the result is a JSON list of search results with URLs
+    // <|tool|>2
+    // browse
+    // Use this tool to get the content of a website with a given URL
+    // <|context|>
+    // The current date is 2023-06-02
+    // <|execution|>
+    // I need to find information about current open-source large language models as of June 2023
+    // <|actions_start|>
+    // <|action|>1
+    // <|use_tool|>1
+    // open-source llms june 2023
+    // <|action|>2
+    // <|use_tool|>1
+    // open-source large language models
+    // <|actions_end|>
+    // <|observations_start|>
+    // <|observation|>1
+    // {search_result_1}
+    // <|observation|>2
+    // {search_result_2}
+    // <|observations_end|> 
+    // `)
+    // }, [tokenizer, text]);
+  });
+
+  // useEffect(() => {
+  //   editor?.commands.setContent(contentHtml);
+  // }, [editor, contentHtml]);
+
+  useEffect(() => {
+    if (!editor) return;
+    let { from, to } = editor.state.selection;
+    editor.commands.setContent(contentHtml,
+      false, {
+      preserveWhitespace: "full"
+    });
+    editor.commands.setTextSelection({ from, to });
+  }, [editor, contentHtml]);
 
   return <div>
+    {/* <div className="grid grid-cols-2 gap-4"> */}
     <div>
-      <button onClick={toggleView}>
-        {view === 'editor' ? 'Tokenizer' : 'Edit'}
-      </button>
+      <div>
+        <div>
+          <div>
+            <select value={model} onChange={(e) => setModel(e.target.value)}>
+              {supportedModels.map((model) => <option key={model} value={model}>{model}</option>)}
+            </select>
+          </div>
+          <div># tokens: {tokens.length}</div>
+        </div>
+        {/*
+        <div>
+          <div>
+            {tokens.map((token, i) => <TokenVisualizer key={i} model={model} token={token} />)}
+          </div>
+          {showTokenIds && (
+            <div>
+              [
+              {tokens.map((token, i) => <React.Fragment key={i}><TokenVisualizer key={i} model={model} token={{ ...token, content: token.id.toString() }} />, </React.Fragment>)}
+              ]
+            </div>
+          )}
+        </div>
+        */}
+      </div>
     </div>
-    <div className="grid grid-cols-2 gap-4">
-      {view === 'editor' && (
-        <div>
-          <textarea value={text} onChange={onChange} className="text-black h-full w-full" />
-        </div>
-      )}
-      {view === 'tokenizer' && (
-        <div>
-          <div>
-            <div>
-              <select value={model} onChange={(e) => setModel(e.target.value)}>
-                {supportedModels.map((model) => <option key={model} value={model}>{model}</option>)}
-              </select>
-            </div>
-            <div># tokens: {tokens.length}</div>
-          </div>
-          <div>
-            <div>
-              {tokens.map((token, i) => <TokenVisualizer key={i} model={model} token={token} />)}
-            </div>
-            {showTokenIds && (
-              <div>
-                [
-                {tokens.map((token, i) => <React.Fragment key={i}><TokenVisualizer key={i} model={model} token={{ ...token, content: token.id.toString() }} />, </React.Fragment>)}
-                ]
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+    <div className="min-h-[500px]">
+      {/* <textarea value={text} onChange={onChange} className="text-black h-full w-full" /> */}
+      <EditorContent editor={editor} className="min-h-[500px]" />
     </div>
   </div>;
 }
@@ -241,4 +335,43 @@ function numberToColor(number: number) {
   const l = 70 + (pseudorandom % 21);
 
   return `hsl(${hue}, ${s}%, ${l}%)`;
+}
+
+function newlinewsToParagraphs(text: string): string {
+  if (!text) {
+    return '';
+  }
+  const lines = text.split('\n');
+  return lines.slice(0, -1).map(line => `<p>${line}</p>`).join('');
+}
+
+function useTokenHighlighter({ tokenizer }: { tokenizer: PreTrainedTokenizer; }) {
+  const tokenizerRef = useRef<PreTrainedTokenizer | null>(null);
+  const [TokenHighlighter] = useState(() => Extension.create({
+    name: 'tokenHighlighter',
+
+    addProseMirrorPlugins() {
+      return [
+        new Plugin({
+          state: {
+            init(_, { doc }) {
+              return findTokens({ doc, tokenizer: tokenizerRef.current });
+            },
+            apply(transaction, oldState) {
+              return transaction.docChanged ? findTokens({ doc: transaction.doc, tokenizer: tokenizerRef.current }) : oldState
+            },
+          },
+          props: {
+            decorations(state) {
+              return this.getState(state)
+            },
+          },
+        }),
+      ]
+    },
+  }));
+
+  tokenizerRef.current = tokenizer;
+
+  return TokenHighlighter;
 }

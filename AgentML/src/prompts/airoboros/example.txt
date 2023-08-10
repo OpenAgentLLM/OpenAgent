@@ -1,0 +1,5 @@
+This is a system message.
+USER: Hey!
+ASSISTANT: Hello!
+USER: What time is it?
+ASSISTANT: As an AI assistant, I don't have a watch.
