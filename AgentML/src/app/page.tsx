@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image'
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 // import { AutoTokenizer } from '@xenova/transformers';
 // Import AutoTokenizer as client side library
 
@@ -12,21 +12,20 @@ import { Tokenizer } from '../components/Tokenizer';
 import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
-const nearley = require("nearley");
-
-import { Tiptap } from '../components/Tiptap';
+import nearley from 'nearley';
 
 // import schema from '../components/json-schema.json';
 // import uiSchema from '../components/ui-schema.json';
 // import schema from '../prompts/v0.2/json-schema.json';
 // import uiSchema from '../prompts/v0.2/ui-schema.json';
-import schema from '../prompts/airoboros/json-schema.json';
-import uiSchema from '../prompts/airoboros/ui-schema.json';
+// import schema from '../prompts/airoboros/json-schema.json';
+// import uiSchema from '../prompts/airoboros/ui-schema.json';
+// import { stringifyPrompt } from '../prompts/airoboros/stringifyPrompt';
+// const grammar = require("../prompts/airoboros/grammar");
 
-// const grammar = require("./grammar.js");
-const grammar = require("../prompts/airoboros/grammar");
+import { schema, uiSchema, stringifyPrompt, grammar } from '../prompts/airoboros';
 
-function parseTextWithGrammar(text: string) {
+function parseTextWithGrammar(text: string): [Error | null, any[] | null] {
   // Create a Parser object from our grammar.
   const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 
@@ -42,14 +41,14 @@ function parseTextWithGrammar(text: string) {
   // ASSISTANT:ello`);
   try {
     parser.feed(text);
-    
+
     // parser.results is an array of possible parsings.
     console.log('parser', parser);
     console.log((parser.results)); // [[[[["foo"],"\n"]]]]
-    return parser.results.flat(2);
-  } catch (error) {
+    return [null, parser.results.flat(2)];
+  } catch (error: any) {
     console.error(error);
-    return [];
+    return [error, null];
   }
 }
 
@@ -69,14 +68,37 @@ const log = (type) => console.log.bind(console, type);
 export default function Home() {
 
   const [text, setText] = useState('');
+  const [json, setJson] = useState({});
 
-  const parsed = parseTextWithGrammar(text);
-  console.log('parsed', parsed);
+  const [parsedError, parsed] = useMemo(() => parseTextWithGrammar(text), [text]);
+  // console.log('parsed', parsed);
 
-  const json = parsed.length > 0 ? {
-    system: parsed[0].system,
-    messages: parsed[0].messages,
-  } : {};
+  // const json = parsed.length > 0 ? {
+  //   system: parsed[0].system,
+  //   messages: parsed[0].messages,
+  // } : {};
+
+  const updateJson = useCallback((text: string) => {
+    const [parsedError, parsed] = parseTextWithGrammar(text);
+    console.log('parsed', { parsedError, parsed });
+
+    if (!parsed
+      || (Array.isArray(parsed) && parsed.length === 0)
+    ) {
+      return;
+    }
+
+    const nextJson = parsed.length > 0 ? {
+      system: parsed[0].system,
+      messages: parsed[0].messages,
+    } : {};
+    setJson(nextJson);
+  }, [setJson]);
+
+  const setTextAndJson = useCallback((text: string) => {
+    setText(text);
+    updateJson(text);
+  }, [setText, updateJson]);
 
   // useEffect(() => {
   //   (async () => {
@@ -88,17 +110,15 @@ export default function Home() {
   //   })();
   // }, []);
 
-  const onSchemaFormChanged = (event) => {
+  const onSchemaFormChanged = useCallback((event) => {
     console.log('onSchemaFormChanged', event);
     const { formData } = event;
 
-    const messages: string[] = formData.messages.map(message => {
-      return `${message.role.toUpperCase()}:${message.content}`;
-    });
-    const newText = `${formData.system}\n${messages.join('\n')}`;
+    const newText = stringifyPrompt(formData);
     console.log('newText', newText);
     setText(newText);
-  };
+    setJson(formData);
+  }, [setText, setJson]);
 
   return (
     // <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -108,9 +128,9 @@ export default function Home() {
       <div className="mx-auto w-full grow lg:flex xl:px-2">
         {/* Left sidebar & main wrapper */}
         <div className="flex-1 xl:flex">
-        {/* <div className="columns-2"> */}
+          {/* <div className="columns-2"> */}
           <div className="w-full">
-          {/* <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">*/}
+            {/* <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">*/}
             <Form
               className="schema-form"
               schema={schema}
@@ -128,17 +148,22 @@ export default function Home() {
           {/* <div className="border-b border-gray-200 px-4 py-6 sm:px-6 lg:pl-8 xl:border-b-0 xl:border-r xl:pl-6"> */}
           <div className="w-full">
             {/* Left column area */}
-            {/* <Tiptap /> */}
-            <pre>
+            {/* <pre> */}
               {/* {JSON.stringify(text)} */}
-              {JSON.stringify(parsed, null, 2)}
+              {/* {JSON.stringify(parsed, null, 2)} */}
               {/* {JSON.stringify(json, null, 2)} */}
-            </pre>
+            {/* </pre> */}
 
             <Tokenizer
               text={text}
-              setText={setText}
+              setText={setTextAndJson}
             />
+
+            {parsedError && (
+              <pre>
+                {parsedError.toString()}
+              </pre>
+            )}
 
           </div>
 

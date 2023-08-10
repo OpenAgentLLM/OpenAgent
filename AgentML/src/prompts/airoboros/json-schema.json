@@ -9,6 +9,7 @@
         "title": "Preamble/System Prompt"
       },
       "messages": {
+        "title": "Messages",
         "type": "array",
         "items": {
           "type": "object",
@@ -17,6 +18,7 @@
             "role": {
               "type": "string",
               "title": "Role",
+              "default": "user",
               "enum": ["user", "assistant"]
             },
             "content": {

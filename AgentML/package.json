@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:grammars": "(cd src/prompts/airoboros/ && nearleyc chat-grammar.ne -o grammar.js)"
+    "build:grammars": "(cd src/prompts/airoboros/ && nearleyc chat-grammar.ne -o grammar.js)",
+    "viz:grammars": "(cd src/prompts/airoboros/ && nearley-railroad chat-grammar.ne -o grammar.html)"
   },
   "dependencies": {
     "@rjsf/core": "^5.11.2",

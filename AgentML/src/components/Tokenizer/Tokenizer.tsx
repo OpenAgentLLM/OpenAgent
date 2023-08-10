@@ -45,7 +45,8 @@ const supportedModels: string[] = [
 
 export interface TokenizerProps {
   text: string;
-  setText: React.Dispatch<React.SetStateAction<string>>;
+  // setText: React.Dispatch<React.SetStateAction<string>>;
+  setText: (text: string) => void;
 }
 
 export function Tokenizer({ text, setText }: TokenizerProps) {
@@ -101,7 +102,9 @@ export function Tokenizer({ text, setText }: TokenizerProps) {
         },
         'text': ({ node, pos, parent, index }) => {
           // console.log('text node', { node, parent });
-          const text = node.text || '';
+          const nonBreakingSpace = ' ';
+          const text = (node.text || '')
+            .replaceAll(nonBreakingSpace, ' ');
           if (parent?.type.name === 'paragraph') {
             return `${text}\n`;
           }
@@ -210,9 +213,11 @@ export function Tokenizer({ text, setText }: TokenizerProps) {
         */}
       </div>
     </div>
-    <div className="min-h-[500px]">
+    <div
+    // className="min-h-[500px]"
+    >
       {/* <textarea value={text} onChange={onChange} className="text-black h-full w-full" /> */}
-      <EditorContent editor={editor} className="min-h-[500px]" />
+      <EditorContent editor={editor} />
     </div>
   </div>;
 }

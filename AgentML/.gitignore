@@ -34,4 +34,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Prompts - Generated Files
 **/prompts/**/grammar.js
+**/prompts/**/grammar.html

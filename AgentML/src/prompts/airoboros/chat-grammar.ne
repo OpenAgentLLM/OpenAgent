@@ -1,7 +1,6 @@
-#Main -> SystemPrompt "\n" Messages | Messages {% (d) => d.length === 1 ? ({ d, system: null, messages: d[0].flat() }) : ({ d: d, system: '', messages: 'mg' }) %}
+Main -> PromptWithSystem | PromptOnlyMessages | PromptOnlySystem {% (d) => d[0] %}
 
-Main -> PromptWithSystem | PromptOnlyMessages {% (d) => d[0] %}
-
+PromptOnlySystem -> SystemPrompt {% (d) => ({ d, system: d[0].content, messages: [] }) %}
 PromptWithSystem -> SystemPrompt "\n" Messages {% (d) => ({ d, system: d[0].content, messages: d[2].flat() }) %}
 PromptOnlyMessages -> Messages {% (d) => ({ d, system: null, messages: d[0].flat() }) %}
 
@@ -10,5 +9,6 @@ Messages -> Message | Message "\n" Messages {% (d) => d.filter(v => v !== '\n' )
 Message -> UserPrompt | UserPrompt "\n" AssistantPrompt {% (d) => d.filter(v => v !== '\n' ).flat(1) %}
 UserPrompt -> "USER:" Text:? {% (d) => ({ role: 'user', content: d[1] }) %}
 AssistantPrompt -> "ASSISTANT:" Text:? {% (d) => ({ role: 'assistant', content: d[1] }) %}
-Text -> [ a-zA-Z0-9\n!?.\-]:+ {% (d) => d[0].join('') %}
-# Text -> [.]:+ {% (d) => d[0].join('') %}
+Text -> [ a-zA-Z0-9\n!?.\-'",]:+ {% (d) => d[0].join('') %}
+# Text -> [ a-zA-Z0-9\n!?.\-'",\:]:+ {% (d) => d[0].join('') %}
+# Text -> .:+ {% (d) => d[0].join('') %}
