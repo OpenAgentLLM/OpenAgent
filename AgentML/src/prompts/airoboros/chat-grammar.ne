@@ -10,4 +10,5 @@ Messages -> Message | Message "\n" Messages {% (d) => d.filter(v => v !== '\n' )
 Message -> UserPrompt | UserPrompt "\n" AssistantPrompt {% (d) => d.filter(v => v !== '\n' ).flat(1) %}
 UserPrompt -> "USER:" Text:? {% (d) => ({ role: 'user', content: d[1] }) %}
 AssistantPrompt -> "ASSISTANT:" Text:? {% (d) => ({ role: 'assistant', content: d[1] }) %}
-Text -> [a-zA-Z0-9 \n.]:+ {% (d) => d[0].join('') %}
+Text -> [ a-zA-Z0-9\n!?.\-]:+ {% (d) => d[0].join('') %}
+# Text -> [.]:+ {% (d) => d[0].join('') %}

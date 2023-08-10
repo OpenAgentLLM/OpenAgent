@@ -1,8 +1,7 @@
 import { Extension } from '@tiptap/core'
 import { Plugin } from '@tiptap/pm/state'
 
-// import findColors from './findColors'
-import { findTokens as findColors } from './findTokens';
+import findColors from './findColors'
 
 export const ColorHighlighter = Extension.create({
   name: 'colorHighlighter',

@@ -1,13 +1,14 @@
 "use client";
 
 import Image from 'next/image'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 // import { AutoTokenizer } from '@xenova/transformers';
 // Import AutoTokenizer as client side library
 
 // Import Tokenizer as SSR disabled React component for Next.js
-import dynamic from 'next/dynamic';
-const Tokenizer = dynamic(() => import('../components/Tokenizer').then(mod => mod.Tokenizer), { ssr: false });
+// import dynamic from 'next/dynamic';
+// const Tokenizer = dynamic(() => import('../components/Tokenizer').then(mod => mod.Tokenizer), { ssr: false });
+import { Tokenizer } from '../components/Tokenizer';
 import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
@@ -25,22 +26,32 @@ import uiSchema from '../prompts/airoboros/ui-schema.json';
 // const grammar = require("./grammar.js");
 const grammar = require("../prompts/airoboros/grammar");
 
-// Create a Parser object from our grammar.
-const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+function parseTextWithGrammar(text: string) {
+  // Create a Parser object from our grammar.
+  const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 
-// Parse something!
-parser.feed(`USER:hey
-ASSISTANT:ello
-USER:hey
-ASSISTANT:ello
+  // Parse something!
+  // parser.feed(`USER:hey
+  // ASSISTANT:ello
+  // USER:hey
+  // ASSISTANT:ello
 
-USER:hey
-ASSISTANT:ello
-USER:hey
-ASSISTANT:ello`);
-
-// parser.results is an array of possible parsings.
-console.log((parser.results)); // [[[[["foo"],"\n"]]]]
+  // USER:hey
+  // ASSISTANT:ello
+  // USER:hey
+  // ASSISTANT:ello`);
+  try {
+    parser.feed(text);
+    
+    // parser.results is an array of possible parsings.
+    console.log('parser', parser);
+    console.log((parser.results)); // [[[[["foo"],"\n"]]]]
+    return parser.results.flat(2);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 
 
 // const schema: RJSFSchema = {
@@ -57,6 +68,16 @@ const log = (type) => console.log.bind(console, type);
 
 export default function Home() {
 
+  const [text, setText] = useState('');
+
+  const parsed = parseTextWithGrammar(text);
+  console.log('parsed', parsed);
+
+  const json = parsed.length > 0 ? {
+    system: parsed[0].system,
+    messages: parsed[0].messages,
+  } : {};
+
   // useEffect(() => {
   //   (async () => {
   //     const { AutoTokenizer } = await import("@xenova/transformers");
@@ -66,6 +87,18 @@ export default function Home() {
   //     console.log(input_ids);
   //   })();
   // }, []);
+
+  const onSchemaFormChanged = (event) => {
+    console.log('onSchemaFormChanged', event);
+    const { formData } = event;
+
+    const messages: string[] = formData.messages.map(message => {
+      return `${message.role.toUpperCase()}:${message.content}`;
+    });
+    const newText = `${formData.system}\n${messages.join('\n')}`;
+    console.log('newText', newText);
+    setText(newText);
+  };
 
   return (
     // <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -83,9 +116,11 @@ export default function Home() {
               schema={schema}
               uiSchema={uiSchema}
               validator={validator}
-              onChange={log('changed')}
+              // onChange={log('changed')}
+              onChange={onSchemaFormChanged}
               onSubmit={log('submitted')}
               onError={log('errors')}
+              formData={json}
             />
           </div>
 
@@ -94,7 +129,17 @@ export default function Home() {
           <div className="w-full">
             {/* Left column area */}
             {/* <Tiptap /> */}
-            <Tokenizer />
+            <pre>
+              {/* {JSON.stringify(text)} */}
+              {JSON.stringify(parsed, null, 2)}
+              {/* {JSON.stringify(json, null, 2)} */}
+            </pre>
+
+            <Tokenizer
+              text={text}
+              setText={setText}
+            />
+
           </div>
 
         </div>

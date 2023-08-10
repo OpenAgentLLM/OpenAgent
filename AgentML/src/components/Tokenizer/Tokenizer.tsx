@@ -32,6 +32,8 @@ const customTokens: string[] = [
   "<|observations_start|>",
   "<|observation|>",
   "<|observations_end|>",
+  "USER:",
+  "ASSISTANT:",
 ]
 
 const showTokenIds = false;
@@ -41,9 +43,14 @@ const supportedModels: string[] = [
   'mosaicml/mpt-7b',
 ];
 
-export function Tokenizer() {
+export interface TokenizerProps {
+  text: string;
+  setText: React.Dispatch<React.SetStateAction<string>>;
+}
 
-  const [text, setText] = useState('');
+export function Tokenizer({ text, setText }: TokenizerProps) {
+
+  // const [text, setText] = useState('');
   const [tokens, setTokens] = useState<Token[]>([]);
 
   const [model, setModel] = useState(supportedModels[0]);
@@ -342,7 +349,11 @@ function newlinewsToParagraphs(text: string): string {
     return '';
   }
   const lines = text.split('\n');
-  return lines.slice(0, -1).map(line => `<p>${line}</p>`).join('');
+  if (lines[lines.length - 1] === '') {
+    lines.pop();
+  }
+  // return lines.slice(0, -1)
+  return lines.map(line => `<p>${line}</p>`).join('');
 }
 
 function useTokenHighlighter({ tokenizer }: { tokenizer: PreTrainedTokenizer; }) {

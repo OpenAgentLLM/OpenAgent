@@ -13,5 +13,12 @@
     "context": {
       "ui:widget": "textarea"
     }
+  },
+  "messages": {
+    "items": {
+      "content": {
+        "ui:widget": "textarea"
+      }
+    }
   }
 }
