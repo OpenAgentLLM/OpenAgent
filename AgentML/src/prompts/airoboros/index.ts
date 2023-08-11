@@ -1,6 +1,4 @@
-import schema from './json-schema.json';
-import uiSchema from './ui-schema.json';
-export { schema, uiSchema };
+export { jsonSchema, uiSchema } from './schema';
 export { stringifyPrompt } from './stringifyPrompt';
 
 export const grammar = require("./grammar");

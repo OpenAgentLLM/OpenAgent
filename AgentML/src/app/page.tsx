@@ -11,7 +11,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Tokenizer } from '../components/Tokenizer';
 import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/core';
-import { RJSFSchema } from '@rjsf/utils';
 import nearley from 'nearley';
 
 // import schema from '../components/json-schema.json';
@@ -23,7 +22,7 @@ import nearley from 'nearley';
 // import { stringifyPrompt } from '../prompts/airoboros/stringifyPrompt';
 // const grammar = require("../prompts/airoboros/grammar");
 
-import { schema, uiSchema, stringifyPrompt, grammar } from '../prompts/airoboros';
+import { jsonSchema, uiSchema, stringifyPrompt, grammar } from '../prompts/airoboros';
 
 function parseTextWithGrammar(text: string): [Error | null, any[] | null] {
   // Create a Parser object from our grammar.
@@ -51,17 +50,6 @@ function parseTextWithGrammar(text: string): [Error | null, any[] | null] {
     return [error, null];
   }
 }
-
-
-// const schema: RJSFSchema = {
-//   title: 'Todo',
-//   type: 'object',
-//   required: ['title'],
-//   properties: {
-//     title: { type: 'string', title: 'Title', default: 'A new task' },
-//     done: { type: 'boolean', title: 'Done?', default: false },
-//   },
-// };
 
 const log = (type) => console.log.bind(console, type);
 
@@ -133,7 +121,7 @@ export default function Home() {
             {/* <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">*/}
             <Form
               className="schema-form"
-              schema={schema}
+              schema={jsonSchema}
               uiSchema={uiSchema}
               validator={validator}
               // onChange={log('changed')}
@@ -148,22 +136,22 @@ export default function Home() {
           {/* <div className="border-b border-gray-200 px-4 py-6 sm:px-6 lg:pl-8 xl:border-b-0 xl:border-r xl:pl-6"> */}
           <div className="w-full">
             {/* Left column area */}
-            {/* <pre> */}
-              {/* {JSON.stringify(text)} */}
-              {/* {JSON.stringify(parsed, null, 2)} */}
-              {/* {JSON.stringify(json, null, 2)} */}
-            {/* </pre> */}
 
             <Tokenizer
               text={text}
               setText={setTextAndJson}
-            />
+              />
 
             {parsedError && (
               <pre>
                 {parsedError.toString()}
               </pre>
             )}
+            <pre>
+              {/* {JSON.stringify(text)} */}
+              {JSON.stringify(parsed, null, 2)}
+              {/* {JSON.stringify(json, null, 2)} */}
+            </pre>
 
           </div>
 
