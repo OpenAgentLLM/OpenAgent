@@ -34,7 +34,13 @@ const customTokens: string[] = [
   "<|observations_end|>",
   "USER:",
   "ASSISTANT:",
-]
+  "BEGININPUT",
+  "BEGINCONTEXT",
+  "ENDCONTEXT",
+  "ENDINPUT",
+  "BEGININSTRUCTION",
+  "ENDINSTRUCTION",
+];
 
 const showTokenIds = false;
 const supportedModels: string[] = [
@@ -89,7 +95,7 @@ export function Tokenizer({ text, setText }: TokenizerProps) {
   // };
 
   const onEditorUpdate = ({ editor: currentEditor }: EditorEvents['update']) => {
-    const nextText = currentEditor.getText({
+    let nextText = (currentEditor.getText({
       // blockSeparator: '\n',
       blockSeparator: '',
       textSerializers: {
@@ -112,13 +118,19 @@ export function Tokenizer({ text, setText }: TokenizerProps) {
           // return node?.text?.slice(Math.max(from, pos) - pos, to - pos) // eslint-disable-line
         }
       }
-    });
+    }) || '')
     const nextHTML = currentEditor.getHTML();
     // console.log('onEditorUpdate', { nextText, nextHTML });
     console.log('onEditorUpdate nextText');
     console.log(nextText);
     console.log('onEditorUpdate nextHTML');
     console.log(nextHTML);
+    
+    // Remove last \n
+    if (!nextHTML.endsWith('<p></p>')) {
+      nextText = nextText.slice(0, -1);
+    }
+
     setText(nextText);
     onUpdateTokensDebounced(nextText);
   };
@@ -183,7 +195,7 @@ export function Tokenizer({ text, setText }: TokenizerProps) {
       preserveWhitespace: "full"
     });
     editor.commands.setTextSelection({ from, to });
-  }, [editor, contentHtml]);
+  }, [editor, contentHtml, tokenizer]);
 
   return <div>
     {/* <div className="grid grid-cols-2 gap-4"> */}

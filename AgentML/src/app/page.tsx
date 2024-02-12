@@ -117,7 +117,7 @@ export default function Home() {
         {/* Left sidebar & main wrapper */}
         <div className="flex-1 xl:flex">
           {/* <div className="columns-2"> */}
-          <div className="w-full">
+          <div className="w-full h-screen overflow-y-scroll">
             {/* <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">*/}
             <Form
               className="schema-form"
@@ -134,7 +134,7 @@ export default function Home() {
 
           {/* <div className="border-b border-gray-200 px-4 py-6 sm:px-6 lg:pl-8 xl:w-64 xl:shrink-0 xl:border-b-0 xl:border-r xl:pl-6"> */}
           {/* <div className="border-b border-gray-200 px-4 py-6 sm:px-6 lg:pl-8 xl:border-b-0 xl:border-r xl:pl-6"> */}
-          <div className="w-full">
+          <div className="w-full h-screen overflow-y-scroll">
             {/* Left column area */}
 
             <Tokenizer
@@ -149,7 +149,7 @@ export default function Home() {
             )}
             <pre>
               {/* {JSON.stringify(text)} */}
-              {JSON.stringify(parsed, null, 2)}
+              {/* {JSON.stringify(parsed, null, 2)} */}
               {/* {JSON.stringify(json, null, 2)} */}
             </pre>
 

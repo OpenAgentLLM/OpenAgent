@@ -7,8 +7,9 @@ export const jsonSchema: RJSFSchema = {
   "required": ["messages"],
   "properties": {
     "system": {
-      "type": "string",
-      "title": "Preamble/System Prompt"
+      // "type": "string",
+      "title": "Preamble/System Prompt",
+      "$ref": "#/definitions/multilineString"
     },
     "messages": {
       "title": "Messages",
@@ -23,15 +24,12 @@ export const jsonSchema: RJSFSchema = {
             "default": "user",
             "enum": ["user", "assistant"]
           },
-          // "content": {
-          //   "type": "string",
-          //   "title": "Content"
-          // }
           "content": {
             "anyOf": [
               {
                 "title": "Text Content",
-                "type": "string",
+                "$ref": "#/definitions/multilineString"
+                // "type": "string",
               },
               {
                 "title": "Input Blocks with Instruction",
@@ -44,6 +42,20 @@ export const jsonSchema: RJSFSchema = {
                       "properties": {
                         "content": {
                           "type": "string"
+                        },
+                        "context": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string",
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         }
                       }
                     }
@@ -57,6 +69,12 @@ export const jsonSchema: RJSFSchema = {
           }
         }
       }
+    }
+  },
+  "definitions": {
+    "multilineString": {
+      "title": "Multiline String",
+      "type": "string",
     }
   }
 }
@@ -80,11 +98,26 @@ export const uiSchema: UiSchema = {
   "system": {
     "ui:widget": "textarea"
   },
-  // "messages": {
-  //   "items": {
-  //     "content": {
-  //       "ui:widget": "textarea"
-  //     }
-  //   }
-  // }
+  "messages": {
+    "items": {
+      "content": {
+        // "ui:widget": "textarea",
+        "instruction": {
+          "ui:widget": "textarea",
+        },
+        "inputs": {
+          "items": {
+            "content": {
+              "ui:widget": "textarea",
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "multilineString": {
+      "ui:widget": "textarea",
+    }
+  }
 };

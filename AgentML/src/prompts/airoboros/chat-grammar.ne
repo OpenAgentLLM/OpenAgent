@@ -26,7 +26,8 @@
 		//char: /[.\:]/,
 		//ws: /[ \n]+/,
 		lineBreak: { match: /\n/, lineBreaks: true },
-		char: { match: /(?:.)+/, },
+		//char: { match: /(?:.)+/, },
+		char: { match: /./, },
 		//lineBreaks: /(?:(?:[ \n]+))/
 	});
 %}
@@ -64,7 +65,8 @@ UserContent -> _ InputBlock:* _ InstructionBlock _ {% (d) => ({ inputs: d[1], in
 
 # Text -> %text {% (d) => d[0].value %}
 #Text -> %char:+ {% (d) => d %}
-Text -> Char:+ {% (d) => d[0].join('') %}
+TextWithoutNewline -> Char:+ {% (d) => d[0].join('') %}
+Text -> TextWithoutNewline
 Char -> %char {% (d) => d[0].value %}
 #Text -> %char:+ {% (d) => d[0].value %}
 Text -> Text LineBreak:+ {% (d) => d[0] + (d[1] || '').join('') %}
@@ -94,6 +96,7 @@ Text -> Text LineBreak:+ {% (d) => d[0] + (d[1] || '').join('') %}
 #InputBlock -> %beginInput %lineBreak %beginContext %lineBreak InputContextProp:* %endContext %lineBreak Text:? %lineBreak %endInput %lineBreak {% (d) => ({ context: d[4], content: d[7] }) %}
 #InputBlock -> %beginInput %lineBreak %beginContext %lineBreak %endContext %lineBreak %endInput %lineBreak {% (d) => ({ context: d[4], content: d[7] }) %}
 InputBlock -> %beginInput %lineBreak InputContextBlock %lineBreak Text:? %lineBreak %endInput %lineBreak {% (d) => ({ context: d[2], content: d[4] }) %}
+InputBlock -> %beginInput %lineBreak InputContextBlock %lineBreak:+ %endInput %lineBreak {% (d) => ({ context: d[2], content: null }) %}
 
 
 InputContextBlock -> %beginContext %lineBreak InputContextProp:* %endContext {% (d) => d[2] %}
@@ -111,10 +114,14 @@ InputContextBlock -> %beginContext %lineBreak:+ %endContext {% (d) => null %}
 # InputContextProp -> _ ObjectKey ":" Text _ #{% (d) => ({ key: d[0], value: d[2] }) %}
 #InputContextProp -> "Broken" #{% (d) => ({ key: d[0], value: d[2] }) %}
 # InputContextProp -> _ ObjectKey ":" Text %lineBreak:? {% (d) => ({ key: d[1], value: d[3] }) %}
-InputContextProp -> _ %char:+ ":" %char:+ %lineBreak:? {% (d) => ({ key: d[1], value: d[3] }) %}
+InputContextProp -> _ ObjectKey ":" ObjectValue %lineBreak {% (d) => ({ key: d[1], value: d[3] }) %}
 # InputContextProp -> _ ObjectKey ":" %text %lineBreak:? #{% (d) => ({ key: d[0], value: d[2] }) %}
 
 # ObjectKey -> [a-zA-Z0-9]:+
+# ObjectKey -> %char:+
+ObjectKey -> TextWithoutNewline {% (d) => d[0] %}
+# ObjectValue -> %char:+
+ObjectValue -> Text {% (d) => d[0] %}
 
 LineBreak -> %lineBreak {% (d) => d[0].value %}
 
@@ -127,21 +134,6 @@ InstructionBlock -> %beginInstruction %lineBreak:+ %endInstruction {% (d) => ({ 
 _  -> wschar:* {% function(d) {return null;} %}
 __ -> wschar:+ {% function(d) {return null;} %}
 wschar -> [ \t\n] {% id %}
-
-#BEGININPUT
-#BEGINCONTEXT
-#key0: value0
-#key1: value1
-#ENDCONTEXT
-#Insert your block of text here
-#ENDINPUT
-#BEGININPUT
-#BEGINCONTEXT
-#key0: value0
-#key1: value1
-#ENDCONTEXT
-#Insert your block of text here
-#ENDINPUT
 
 @{%
 

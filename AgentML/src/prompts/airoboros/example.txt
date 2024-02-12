@@ -3,3 +3,15 @@ USER: Hey!
 ASSISTANT: Hello!
 USER: What time is it?
 ASSISTANT: As an AI assistant, I don't have a watch.
+
+
+USER:Here is some stuff
+BEGININPUT
+BEGINCONTEXT
+key0: value0
+ENDCONTEXT
+Insert your block of text here
+ENDINPUT
+BEGININSTRUCTION
+Insert instructions here
+ENDINSTRUCTION

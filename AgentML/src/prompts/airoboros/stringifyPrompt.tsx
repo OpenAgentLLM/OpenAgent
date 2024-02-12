@@ -10,16 +10,17 @@ export function stringifyPrompt(formData: any): string {
 }
 
 function stringifyInputBlocksWithInstructions(content: any): string {
+  
   const inputs = (content.inputs || []).map((input: any) => {
-    return `
-BEGININPUT
+    const context = (input.context || []).map(({ key, value }) => `${key}:${value}`).join('\n');
+    return `BEGININPUT
 BEGINCONTEXT
+${context}
 ENDCONTEXT
 ${input.content || ''}
-ENDINPUT
-`;
+ENDINPUT`;
   });
-  return `${inputs.join('\n')}
+  return `\n${inputs.join('\n')}
 BEGININSTRUCTION
 ${content.instruction || ''}
 ENDINSTRUCTION`;
