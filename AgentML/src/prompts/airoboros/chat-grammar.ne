@@ -56,9 +56,11 @@ Message -> UserPrompt | UserPrompt AssistantPrompt {% (d) => flatten(d.filter(v 
 #UserPrompt -> "USER:" UserContent:? {% (d) => ({ role: 'user', content: d[1] }) %}
 UserPrompt -> %userPrefix UserContent:? {% (d) => ({ role: 'user', content: d[1] }) %}
 #AssistantPrompt -> "ASSISTANT:" Text:? {% (d) => ({ role: 'assistant', content: d[1] }) %}
-AssistantPrompt -> %assistantPrefix Text:? {% (d) => ({ role: 'assistant', content: d[1] }) %}
+# AssistantPrompt -> %assistantPrefix Text:? {% (d) => ({ role: 'assistant', content: d[1] }) %}
+AssistantPrompt -> %assistantPrefix Text:? {% (d) => ({ role: 'assistant', content: { text: d[1] } }) %}
 
-UserContent -> Text {% (d) => d[0] %}
+# UserContent -> Text {% (d) => d[0] %}
+UserContent -> Text {% (d) => ({ text: d[0] }) %}
 #UserContent -> UserContext _ InputBlock:* _ Text:?
 #UserContent -> Text _ InputBlock:* _ UserContent:?
 UserContent -> _ InputBlock:* _ InstructionBlock _ {% (d) => ({ inputs: d[1], instruction: d[3]?.instruction }) %}
@@ -66,10 +68,19 @@ UserContent -> _ InputBlock:* _ InstructionBlock _ {% (d) => ({ inputs: d[1], in
 # Text -> %text {% (d) => d[0].value %}
 #Text -> %char:+ {% (d) => d %}
 TextWithoutNewline -> Char:+ {% (d) => d[0].join('') %}
-Text -> TextWithoutNewline
+# Text -> TextWithoutNewline
 Char -> %char {% (d) => d[0].value %}
 #Text -> %char:+ {% (d) => d[0].value %}
-Text -> Text LineBreak:+ {% (d) => d[0] + (d[1] || '').join('') %}
+# Text -> Text LineBreak:+ {% (d) => d[0] + (d[1] || '').join('') %}
+# Text -> LineBreak:+ Text {% (d) => (d[0] || '').join('') + d[1] %}
+
+CharWithNewline -> Char
+CharWithNewline -> LineBreak
+Text -> CharWithNewline:+ {% (d) => d[0].join('') %}
+
+# Text -> Text LineBreak:+ {% (d) => d[0] + (d[1] || '').join('') %}
+
+
 # Text -> Text LineBreak:+ {% (d) => [d[0], d[1]].filter(Boolean).join('') %}
 # Text -> Text LineBreak:+ {% (d) => [d[0], '\n', d[2]].filter(Boolean).join('') %}
 # Text -> Text %lineBreak:+ {% (d) => [d[0], '\n', d[2]].filter(Boolean).join('') %}
@@ -95,8 +106,8 @@ Text -> Text LineBreak:+ {% (d) => d[0] + (d[1] || '').join('') %}
 #InputBlock -> %beginInput _ %beginContext %lineBreak InputContextProp:* %endContext %lineBreak Text:? %lineBreak %endInput _ {% (d) => ({ context: d[4], content: d[7] }) %}
 #InputBlock -> %beginInput %lineBreak %beginContext %lineBreak InputContextProp:* %endContext %lineBreak Text:? %lineBreak %endInput %lineBreak {% (d) => ({ context: d[4], content: d[7] }) %}
 #InputBlock -> %beginInput %lineBreak %beginContext %lineBreak %endContext %lineBreak %endInput %lineBreak {% (d) => ({ context: d[4], content: d[7] }) %}
-InputBlock -> %beginInput %lineBreak InputContextBlock %lineBreak Text:? %lineBreak %endInput %lineBreak {% (d) => ({ context: d[2], content: d[4] }) %}
-InputBlock -> %beginInput %lineBreak InputContextBlock %lineBreak:+ %endInput %lineBreak {% (d) => ({ context: d[2], content: null }) %}
+InputBlock -> %beginInput %lineBreak:+ InputContextBlock %lineBreak Text:? %lineBreak %endInput %lineBreak {% (d) => ({ context: d[2], content: d[4] }) %}
+InputBlock -> %beginInput %lineBreak:+ InputContextBlock %lineBreak:+ %endInput %lineBreak {% (d) => ({ context: d[2], content: null }) %}
 
 
 InputContextBlock -> %beginContext %lineBreak InputContextProp:* %endContext {% (d) => d[2] %}

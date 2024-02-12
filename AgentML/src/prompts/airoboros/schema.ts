@@ -7,7 +7,6 @@ export const jsonSchema: RJSFSchema = {
   "required": ["messages"],
   "properties": {
     "system": {
-      // "type": "string",
       "title": "Preamble/System Prompt",
       "$ref": "#/definitions/multilineString"
     },
@@ -28,8 +27,14 @@ export const jsonSchema: RJSFSchema = {
             "anyOf": [
               {
                 "title": "Text Content",
-                "$ref": "#/definitions/multilineString"
-                // "type": "string",
+                // "$ref": "#/definitions/multilineString"
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "$ref": "#/definitions/multilineString"
+                    // "type": "string"
+                  }
+                }
               },
               {
                 "title": "Input Blocks with Instruction",
@@ -96,19 +101,52 @@ export const uiSchema: UiSchema = {
     }
   },
   "system": {
-    "ui:widget": "textarea"
+    "ui:widget": "textarea",
+    "ui:options": {
+      "rows": 3
+    }
   },
   "messages": {
     "items": {
       "content": {
         // "ui:widget": "textarea",
+        "text": {
+          // "ui:widget": "textarea",
+          "ui:options": {
+            "widget": "textarea",
+            "rows": 3
+          }
+        },
         "instruction": {
           "ui:widget": "textarea",
+          "ui:options": {
+            "rows": 3
+          }
         },
         "inputs": {
           "items": {
             "content": {
               "ui:widget": "textarea",
+              "ui:options": {
+                "rows": 3
+              }
+            },
+            "context": {
+              "items": {
+                "key": {
+                  // "ui:widget": "textarea",
+                  // "ui:options": {
+                  //   "rows": 1
+                  // }
+                },
+                "value": {
+                  "ui:widget": "textarea",
+                  "ui:options": {
+                    "rows": 2
+                  }
+                }
+              }
+            
             }
           }
         }
@@ -118,6 +156,9 @@ export const uiSchema: UiSchema = {
   "definitions": {
     "multilineString": {
       "ui:widget": "textarea",
+      "ui:options": {
+        "rows": 3
+      }
     }
   }
 };

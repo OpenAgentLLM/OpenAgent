@@ -10,7 +10,12 @@ export function stringifyPrompt(formData: any): string {
 }
 
 function stringifyInputBlocksWithInstructions(content: any): string {
-  
+  if (typeof content === 'string') {
+    return content;
+  }
+  if (typeof content == 'object' && content.text) {
+    return content.text;
+  }
   const inputs = (content.inputs || []).map((input: any) => {
     const context = (input.context || []).map(({ key, value }) => `${key}:${value}`).join('\n');
     return `BEGININPUT

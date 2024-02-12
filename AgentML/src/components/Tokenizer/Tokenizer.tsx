@@ -44,6 +44,7 @@ const customTokens: string[] = [
 
 const showTokenIds = false;
 const supportedModels: string[] = [
+  'mistralai/Mixtral-8x7B-v0.1',
   'huggyllama/llama-7b',
   // 'tiiuae/falcon-7b',
   'mosaicml/mpt-7b',

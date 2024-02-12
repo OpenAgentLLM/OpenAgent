@@ -115,7 +115,8 @@ export default function Home() {
       {/* <div className="mx-auto w-full max-w-7xl grow lg:flex xl:px-2"> */}
       <div className="mx-auto w-full grow lg:flex xl:px-2">
         {/* Left sidebar & main wrapper */}
-        <div className="flex-1 xl:flex">
+        {/* <div className="flex-1 xl:flex"> */}
+        <div className="flex-1 flex">
           {/* <div className="columns-2"> */}
           <div className="w-full h-screen overflow-y-scroll">
             {/* <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">*/}
